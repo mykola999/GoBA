@@ -2,7 +2,7 @@ import Vue from "vue";
 import axios from "axios";
 import { setup } from "../game";
 
-const host = "goba.holmes-dev.com"; // "localhost:5000";
+const host = window.location.host; // "goba.holmes-dev.com";
 console.log(host);
 
 let app = new Vue({
@@ -44,9 +44,11 @@ let app = new Vue({
     },
 
     createGame: function() {
+      console.log('createGame called');
       let name = this.createName;
+      console.log('name:', name);
 
-      axios.get(`https://${host}/create?name=${name}`).then((result) => {
+      axios.get(`http://${host}/create?name=${name}`).then((result) => {
         this.code = result.data.code;
 
         if (result.data.success) {
@@ -59,7 +61,7 @@ let app = new Vue({
     },
 
     createGameJoin: function(code, name) {
-      let url = `wss://${host}/join?code=${code}&name=${name}`;
+      let url = `ws://${host}/join?code=${code}&name=${name}`;
       let socket = new WebSocket(url);
 
       socket.onmessage = (message) => {
@@ -77,7 +79,7 @@ let app = new Vue({
     },
 
     joinGame: function() {
-      let url = `wss://${host}/join?code=${this.code}&name=${this.joinName}`;
+      let url = `ws://${host}/join?code=${this.code}&name=${this.joinName}`;
       let socket = new WebSocket(url);
 
       socket.onmessage = (message) => {
